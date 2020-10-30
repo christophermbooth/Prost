@@ -4,7 +4,7 @@ import Axios from 'axios'
 
 const clientId = '933644302187-agamsig0qalm5oi4fd44v11hfffpchs8.apps.googleusercontent.com'
 
-const Login = ({ setViewValue }) => {
+const Login = ({setViewValue}) => {
 
     useEffect(() => {
         Axios.get('/db/customer')
