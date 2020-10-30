@@ -2,10 +2,10 @@ import React from 'react';
 import Login from './Login.jsx';
 import Logout from './Logout.jsx';
 
-const LandingPage = () => {
+const LandingPage = ({setViewValue}) => {
   return (
     <div>
-      <Login />
+      <Login setViewValue={setViewValue} />
       <Logout />
     </div>
   );
