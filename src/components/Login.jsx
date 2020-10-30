@@ -46,7 +46,7 @@ const Login = ({setViewValue}) => {
         <div>
             <GoogleLogin
                 clientId={clientId}
-                buttonText='Login'
+                buttonText='Continue with Google'
                 onSuccess={onSuccess}
                 onFailure={onFailure}
                 cookiePolicy={'single_host_origin'}
