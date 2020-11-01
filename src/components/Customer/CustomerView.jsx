@@ -6,7 +6,6 @@ import ForumIcon from '@material-ui/icons/Forum';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import MapContainer from './Create/Map2.jsx';
 import Create from './Create/Create.jsx';
-import FriendsList from './Social/FriendsList.jsx';
 import Messages from './Social/Messages.jsx';
 import Logout from '../Logout.jsx'
 import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
@@ -21,7 +20,7 @@ const useStyles = makeStyles({
     },
 });
 
-const CustomerView = ({setViewValue}) => {
+const CustomerView = ({username, setViewValue}) => {
     const classes = useStyles();
     const [value, setValue] = useState();
 
@@ -37,7 +36,7 @@ const CustomerView = ({setViewValue}) => {
             return <Create />
         }
         if (value === 2) {
-            return <Messages />
+            return <Messages username={username}/>
         }
         if (value === 3) {
             return <OwnerProfile />
