@@ -55,6 +55,7 @@ app.use('/db/friendship', friendshipRouter);
 const { menuRouter } = require('./routes/menu');
 app.use('/db/menu', menuRouter);
 const { eContactRouter } = require('./routes/eContact');
+const { connected } = require('process');
 app.use('/db/eContact', eContactRouter);
 // app.use('/auth', auth);
 
@@ -97,14 +98,27 @@ const connectedUsers = {};
 
 io.on('connect', (socket) => {
   console.log(`new client connected : ${socket.id}`);
-  connectedUsers[socket.id] = socket.id
-  socket.emit('connection', null);
+
+  socket.on('userInfo', data => {
+    console.log(data, `incoming data!`);
+    connectedUsers[socket.id] = data.gId;
+    console.log(connectedUsers);
+    socket.emit('onlineUsers', connectedUsers);
+  })
 
   socket.on('sendMessage', (data) => {
     console.log(data);
     // socket.broadcast.emit('newMessage', data)
     io.emit('newMessage', data)
   })
+
+  socket.on('disconnect', () => {
+    delete connectedUsers[socket.id];
+    console.log(socket.id, 'disconnected')
+    console.log(connectedUsers, 'Remaining connected')
+    io.emit('onlineUsers', connectedUsers);
+  })
+
 });
 
 
