@@ -98,37 +98,64 @@ customerRouter.post('/check', async (req, res) => {
 
 customerRouter.post('/create', (req, res) => {
   // console.log(req.body.personalParams)
-  const { first, last, email, number, gender, googleId, image, username } = req.body.personalParams;
-  Customer.findAll({ where: { id_google: googleId } })
-    .then((customers) => {
-      if (customers.length > 0) {
-        res.send('FOUND USER')
-        Customer.update({
-          first_name: first,
-          last_name: last,
-          user_name: username,
-          id_google: googleId,
-          email: email,
-          phone_number: number,
-          gender_type: gender,
-          profile_image: image,
-        })
+  // const { first, last, email, number, gender, googleId, image, username } = req.body.personalParams;
+  // Customer.findAll({ where: { id_google: googleId } })
+  //   .then((customers) => {
+  //     if (customers.length > 0) {
+  //       res.send('FOUND USER')
+  //       Customer.update({
+  //         first_name: first,
+  //         last_name: last,
+  //         user_name: username,
+  //         id_google: googleId,
+  //         email: email,
+  //         phone_number: number,
+  //         gender_type: gender,
+  //         profile_image: image,
+  //       })
+  //     } else {
+  //       Customer.create({
+  //         first_name: first,
+  //         last_name: last,
+  //         user_name: username,
+  //         id_google: googleId,
+  //         email: email,
+  //         phone_number: number,
+  //         gender_type: gender,
+  //         profile_image: image,
+  //       })
+  //     }
+  //   })
+  //   .catch((err) => {
+  //     console.error('ERROR IN CREATING CUSTOMERS')
+  //   })
+  const {
+    first, last, email, number, gender, googleId, image, username,
+  } = req.body;
+  Customer.findAll({ where: { email } })
+    .then((customer) => {
+      if (customer.length > 0) {
+        res.send(`Customer already in database under: ${customer[0].email}`);
       } else {
         Customer.create({
           first_name: first,
           last_name: last,
           user_name: username,
           id_google: googleId,
-          email: email,
+          email,
           phone_number: number,
           gender_type: gender,
           profile_image: image,
         })
+          .then((customer) => {
+            res.send(`Customer has been created under: ${customer[0].email}`);
+          })
+          .catch((err) => {
+            res.status(401).send('UNABLE TO ADD');
+            console.error(err);
+          });
       }
-    })
-    .catch((err) => {
-      console.error('ERROR IN CREATING CUSTOMERS')
-    })
+    });
 })
 
 customerRouter.post('/location', (req, res) => {

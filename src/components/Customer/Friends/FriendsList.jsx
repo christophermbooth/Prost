@@ -5,8 +5,10 @@ import AddCircleIcon from '@material-ui/icons/AddCircle';
 import PendingFriend from './PendingFriend.jsx';
 import ConfirmedFriend from './ConfirmedFriend.jsx';
 import FriendForm from './FriendForm.jsx';
+import IncomingFriend from './IncomingFriend.jsx';
 
 function FriendsList() {
+    //TODO
     //get request server for all entries in friend table with signed in users google ID
     //if userID in sent column, check if accepted is 1 or 0
         // 1  => render as confirmed friend
@@ -22,41 +24,43 @@ function FriendsList() {
     const [pendingFriends, setPendingFriends] = useState([]);
     const [confirmedFriends, setConfirmedFriends] = useState([])
     const [addFriend, setAddFriend] = useState(false);
-    const [allFriendships, setAllFriendships] = useState([])
 
-    useEffect(() => {
-        Axios.get(`/db/customer/findMe?username=${localStorage.username}`)
+
+    const getMyId = () => {
+        return Axios.get(`/db/customer/findMe?username=${localStorage.username}`)
+    };
+
+    const getMyFriendData = (id) => {
+        Axios.get(`/db/friendship/myFriends?customerId=${id}`)
         .then(({data}) => {
-            Axios.get(`/db/friendship/myFriends?customerId=${data[0].id}`)
-            .then(({data}) => {
-                let tempPendingFriends = [];
-                let tempConfirmedFriends = [];
-                let tempIncomingFriends = [];
-                console.log(data)
-            
-                data.forEach(friendship => {
-                    if (friendship.status === 0) {
-                        tempPendingFriends.push(friendship)
-                    } else if (friendship.status === 1) {
-                        tempConfirmedFriends.push(friendship)
-                    } else {
-                        tempIncomingFriends.push(friendship);
-                    }
-                })
-                setPendingFriends(tempPendingFriends);
-                setConfirmedFriends(tempConfirmedFriends);
-                setIncomingRequests(tempIncomingFriends);
-                setFriends(data);
+            let tempOutgoingFriends = [];
+            let tempConfirmedFriends = [];
+            let tempIncomingFriends = [];
+            console.log(data, 'All friendship data')
+        
+            data.forEach(friendship => {
+                if (friendship.status === true) {
+                    tempConfirmedFriends.push(friendship);
+                } else if (friendship.customerId === id && !friendship.status) {
+                    tempOutgoingFriends.push(friendship);
+                } else if (friendship.id_friend === id && !friendship.status) {
+                    tempIncomingFriends.push(friendship)
+                }
             })
+            setPendingFriends(tempOutgoingFriends);
+            setConfirmedFriends(tempConfirmedFriends);
+            setIncomingRequests(tempIncomingFriends);
+            setFriends(data);
         })
-        // Axios.get('/db/friendship/')
-        //     .then(({data}) => {
-        //         console.log(data, 'FRIENDSHIPS DATA')
-        //         setFriends(data);
-        //         setPendingFriends(data);
-        //         setConfirmedFriends(data);
-        //     })
-        //     .catch(err => console.log(err, 'ERROR IN FRIENDSHIP GET REQUESTS'))
+    };
+
+    useEffect(async () => {
+        let {data} = await getMyId();
+        // console.log(data, 'My Data inside UseEffect returned from function call')
+        // // getMyFriendData(mydata.data[0].id)
+        // console.log(data[0].id, 'myId')
+        getMyFriendData(data[0].id);
+        
     }, [])
 
     if (addFriend) {
@@ -71,6 +75,9 @@ function FriendsList() {
                 <Grid >
                 <Grid className='pending'>
                     {pendingFriends.map(f => <PendingFriend f={f} />)}
+                </Grid>
+                <Grid>
+                    {incomingRequests.map(r => <IncomingFriend r={r} />)}
                 </Grid>
                 <Grid className='confirmed'>
                     {confirmedFriends.map(f => <ConfirmedFriend f={f} />)}
