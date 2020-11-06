@@ -14,11 +14,7 @@ function FoundUser({ userData, u }) {
     };
     return (
         <ListItem>
-<<<<<<< HEAD
             <span>{u.first_name + u.last_name}</span>{friendStatus ? <span>Friend Request Sent</span> : (<span><Button onClick={() => {
-=======
-            <span>{u.first_name + ' ' + u.last_name}</span>{friendStatus ? <span>Friend Request Sent</span> :(<span><Button onClick={() => {
->>>>>>> 66175c7... (example) of pushing a commit
                 setFriendStatus(true)
                 handleFriendRequest(userData.id, u.id)
             }}>Send Friend Request</Button></span>)}
