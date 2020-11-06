@@ -17,7 +17,7 @@ function FoundUser({userData, u}) {
 
     return (
         <ListItem>
-            <span>{u.first_name + u.last_name}</span>{friendStatus ? <span>Friend Request Sent</span> :(<span><Button onClick={() => {
+            <span>{u.first_name + ' ' + u.last_name}</span>{friendStatus ? <span>Friend Request Sent</span> :(<span><Button onClick={() => {
                 setFriendStatus(true)
                 handleFriendRequest(userData.id, u.id)
                 }}>Send Friend Request</Button></span>)}
